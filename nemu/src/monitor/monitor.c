@@ -40,6 +40,7 @@ void init_monitor(int argc, char *argv[]) {
 
 	/* Display welcome message. */
 	welcome();
+
 }
 
 #ifdef USE_RAMDISK
