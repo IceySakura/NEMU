@@ -87,7 +87,7 @@ static int cmd_x(char *args)
 		{
 			printf("0x%08x: ", addr + i * 4);
 		}
-		printf("0x%08x: 0x%08x\n", addr + i * 4, swaddr_read(addr + i * 4, 4));
+		printf("0x%08x\n", swaddr_read(addr + i * 4, 4));
 		if(i % 4 == 3)
 		{
 			printf("\n");
