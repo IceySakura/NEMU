@@ -31,9 +31,9 @@ typedef struct {
 	};
 	
 
-     swaddr_t eip;
+    swaddr_t eip;
      
-     union {
+    union {
 		struct {
 			uint32_t CF		:1;
 			uint32_t pad0	:1;
