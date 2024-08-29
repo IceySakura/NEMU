@@ -62,7 +62,7 @@ static int cmd_info(char *args)
 	}
 	else if(args[0] == 'r')
 	{
-		printf("eax\t\t%08x\\tt%d\n", cpu.eax, cpu.eax);
+		printf("eax\t\t%08x\t\t%d\n", cpu.eax, cpu.eax);
 	}
 	return 0;
 }
