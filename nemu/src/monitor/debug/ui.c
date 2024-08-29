@@ -42,10 +42,28 @@ static int cmd_si(char *args)
 {
 	int n;
 	if(args == NULL)
+	{
 		n = 1;
+	}
 	else
+	{
 		sscanf(args, "%d", &n);
+	}
 	cpu_exec(n);
+	return 0;
+}
+
+static int cmd_info(char *args)
+{
+	if(args == NULL)
+	{
+		printf("info r, display register value.\n");
+		printf("info w, display watchpoint value.\n");
+	}
+	else if(args[0] == 'r')
+	{
+		printf("eax\t\t%08x\\tt%d\n", cpu.eax, cpu.eax);
+	}
 	return 0;
 }
 
@@ -58,6 +76,7 @@ static struct {
 	{ "c", "Continue the execution of the program", cmd_c },
 	{ "q", "Exit NEMU", cmd_q },
 	{ "si", "si [N], Execute for N steps, N default for 1", cmd_si},
+	{ "info", "Display register value or watchpoint value", cmd_info},
 
 	/* TODO: Add more commands */
 
