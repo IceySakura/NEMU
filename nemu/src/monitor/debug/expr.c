@@ -156,6 +156,8 @@ uint32_t eval(int p, int q, bool *success)
 		}
 		else if(tokens[p].type == HEX)
 		{
+			if(tokens[p].str != NULL)
+				Log("hex found: %s", tokens[p].str);
 			sscanf(tokens[p].str, "%x", &num);
 		}
 		else if(tokens[p].type == REG)
