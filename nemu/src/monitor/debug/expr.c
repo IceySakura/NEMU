@@ -162,7 +162,7 @@ uint32_t eval(int p, int q, bool *success)
 		{
 			// Register
 			if(tokens[p].str != NULL)
-				Log("reg found:%s", tokens[p].str);
+				Log("reg found: %s", tokens[p].str);
 			if(strcmp(tokens[p].str, "$eax") == 0) 
 			{num = cpu.eax;Log("eax found");}
 			else if(strcmp(tokens[p].str, "$ecx") == 0) num = cpu.ecx;
