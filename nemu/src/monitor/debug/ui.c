@@ -38,6 +38,7 @@ static int cmd_q(char *args) {
 	return -1;
 }
 
+// Execute for N steps, N default for 1
 static int cmd_si(char *args)
 {
 	int n;
@@ -53,6 +54,7 @@ static int cmd_si(char *args)
 	return 0;
 }
 
+// Display register value or watchpoint value
 static int cmd_info(char *args)
 {
 	if(args == NULL)
@@ -75,6 +77,7 @@ static int cmd_info(char *args)
 	return 0;
 }
 
+// Display ram value
 static int cmd_x(char *args)
 {
 	int n;
@@ -100,6 +103,22 @@ static int cmd_x(char *args)
 	return 0;
 }
 
+// Calculate expr value
+static int cmd_p(char *args)
+{
+	bool success = true;
+	uint32_t result = expr(args, &success);
+	if(success)
+	{
+		printf("0x%08x\n", result);
+	}
+	else
+	{
+		printf("Invalid expression.\n");
+	}
+	return 0;
+}
+
 static struct {
 	char *name;
 	char *description;
@@ -111,6 +130,7 @@ static struct {
 	{ "si", "Execute for N steps, N default for 1", cmd_si},
 	{ "info", "Display register value or watchpoint value", cmd_info},
 	{ "x", "Display ram value", cmd_x},
+	{ "p", "Calculate expr value", cmd_p},
 
 	/* TODO: Add more commands */
 

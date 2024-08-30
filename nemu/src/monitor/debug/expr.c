@@ -89,6 +89,18 @@ static bool make_token(char *e) {
 				 * of tokens, some extra actions should be performed.
 				 */
 
+				tokens[nr_token].type = rules[i].token_type;
+				if(rules[i].token_type == DEC || rules[i].token_type == HEX) 
+				{
+					strncpy(tokens[nr_token].str, substr_start, substr_len);
+					tokens[nr_token].str[substr_len] = '\0';
+				}
+				else 
+				{
+					tokens[nr_token].str[0] = '\0';
+				}
+				nr_token++;
+
 				switch(rules[i].token_type) {
 					default: panic("please implement me");
 				}
@@ -113,7 +125,7 @@ uint32_t expr(char *e, bool *success) {
 	}
 
 	/* TODO: Insert codes to evaluate the expression. */
-	panic("please implement me");
+	Log("nr_token = %d", nr_token);
 	return 0;
 }
 
