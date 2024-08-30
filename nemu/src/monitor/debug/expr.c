@@ -34,8 +34,8 @@ static struct rule {
 	{"\\)", ')'},                   // right bracket
 
 	// operand
-	{"[0-9]+", DEC},                // decimal number
 	{"0x[0-9a-fA-F]+", HEX},        // hexadecimal number
+	{"[0-9]+", DEC},                // decimal number
 	{"$[A-Za-z]+", REG},            // register
 };
 
