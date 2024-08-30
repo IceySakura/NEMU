@@ -161,7 +161,8 @@ uint32_t eval(int p, int q, bool *success)
 		else if(tokens[p].type == REG)
 		{
 			// Register
-			if(strcmp(tokens[p].str, "$eax") == 0) num = cpu.eax;
+			if(strcmp(tokens[p].str, "$eax") == 0) 
+			{num = cpu.eax;Log("eax found");}
 			else if(strcmp(tokens[p].str, "$ecx") == 0) num = cpu.ecx;
 			else if(strcmp(tokens[p].str, "$edx") == 0) num = cpu.edx;
 			else if(strcmp(tokens[p].str, "$ebx") == 0) num = cpu.ebx;
