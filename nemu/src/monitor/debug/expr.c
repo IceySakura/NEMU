@@ -300,8 +300,6 @@ uint32_t expr(char *e, bool *success) {
 			case '-': tokens[i].type = NEG; break;
 			case '*': tokens[i].type = DEREF; break;
 			case '!': tokens[i].type = NOT; break;
-			// Bad expression
-			default: *success = false; return 0;
 		}
 	}
 
