@@ -102,6 +102,7 @@ static bool make_token(char *e) {
 				{
 					strncpy(tokens[nr_token].str, substr_start, substr_len);
 					tokens[nr_token].str[substr_len] = '\0';
+					Log("token[%d].str = %s", nr_token, tokens[nr_token].str);
 				}
 				else 
 				{
