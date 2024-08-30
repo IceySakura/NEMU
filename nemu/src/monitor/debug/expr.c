@@ -101,10 +101,6 @@ static bool make_token(char *e) {
 				}
 				nr_token++;
 
-				switch(rules[i].token_type) {
-					default: panic("please implement me");
-				}
-
 				break;
 			}
 		}
