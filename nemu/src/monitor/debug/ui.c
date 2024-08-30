@@ -106,6 +106,12 @@ static int cmd_x(char *args)
 // Calculate expr value
 static int cmd_p(char *args)
 {
+	if(args == NULL)
+	{
+		printf("Please input expression.\n");
+		return 0;
+	}
+
 	bool success = true;
 	uint32_t result = expr(args, &success);
 	if(success)
