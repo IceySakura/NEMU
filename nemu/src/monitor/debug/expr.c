@@ -30,7 +30,6 @@ static struct rule {
 	// operator                        name                priority 
 	{"\\(", '('},                   // left bracket        1
 	{"\\)", ')'},                   // right bracket
-	{"!", NOT},                     // not
 	{"\\*", '*'},                   // multiply            3
 	{"\\/", '/'},                   // divide 
 	{"\\+", '+'},					// plus                4
@@ -39,6 +38,7 @@ static struct rule {
 	{"!=", NEQ},                    // not equal
 	{"&&", AND},                    // and                 11
 	{"\\|\\|", OR},                 // or
+	{"!", NOT},                     // not
 
 	// operand
 	{"0x[0-9a-fA-F]+", HEX},        // hexadecimal number
@@ -161,6 +161,7 @@ uint32_t eval(int p, int q, bool *success)
 		else if(tokens[p].type == REG)
 		{
 			// Register
+			Log("reg found");
 			if(strcmp(tokens[p].str, "$eax") == 0) 
 			{num = cpu.eax;Log("eax found");}
 			else if(strcmp(tokens[p].str, "$ecx") == 0) num = cpu.ecx;
