@@ -120,6 +120,15 @@ int stack[32], top = -1;
 // brackets matching result
 int match[32];
 
+// check if the operator is unary
+bool is_unary(int i)
+{
+	if(i == 0 || tokens[i - 1].type == '(' || tokens[i - 1].type == '+' || tokens[i - 1].type == '-' || tokens[i - 1].type == '*' || tokens[i - 1].type == '/' || tokens[i - 1].type == EQ)
+	{
+		return true;
+	}
+	return false;
+}
 uint32_t eval(int p, int q, bool *success)
 {
 	if(p > q)
@@ -152,6 +161,24 @@ uint32_t eval(int p, int q, bool *success)
 	{
 		// Remove the outermost brackets
 		return eval(p + 1, q - 1, success);
+	}
+	else if(is_unary(p))
+	{
+		// Unary operator
+		if(tokens[p].type == '+')
+		{
+			return eval(p + 1, q, success);
+		}
+		else if(tokens[p].type == '-')
+		{
+			return -eval(p + 1, q, success);
+		}
+		else
+		{
+			// Bad expression
+			*success &= false;
+			return 0;
+		}
 	}
 	else
 	{
@@ -236,6 +263,10 @@ uint32_t expr(char *e, bool *success) {
 
 	// brackets matching
 	top = -1;
+	for(int i = 0; i < nr_token; i++)
+	{
+		stack[i] = match[i] = -1;
+	}
 	for(int i = 0; i < nr_token; i++)
 	{
 		if(tokens[i].type == '(')
