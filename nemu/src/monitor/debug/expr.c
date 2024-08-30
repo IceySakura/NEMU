@@ -115,6 +115,11 @@ static bool make_token(char *e) {
 	return true; 
 }
 
+// stack for brackets matching
+int stack[32], top = -1;
+// brackets matching result
+int match[32];
+
 uint32_t eval(int p, int q, bool *success)
 {
 	if(p > q)
@@ -143,7 +148,7 @@ uint32_t eval(int p, int q, bool *success)
 		}
 		return num;
 	}
-	else if(tokens[p].type == '(' && tokens[q].type == ')')
+	else if(tokens[p].type == '(' && tokens[q].type == ')' && match[p] == q)
 	{
 		// Remove the outermost brackets
 		return eval(p + 1, q - 1, success);
@@ -164,17 +169,17 @@ uint32_t eval(int p, int q, bool *success)
 			}
 			else if(cnt == 0)
 			{
-				if(mxpr < 4 && (tokens[i].type == '+' || tokens[i].type == '-'))
+				if(mxpr <= 4 && (tokens[i].type == '+' || tokens[i].type == '-'))
 				{
 					mxpr = 4;
 					mxi = i;
 				}
-				else if(mxpr < 3 && (tokens[i].type == '*' || tokens[i].type == '/'))
+				else if(mxpr <= 3 && (tokens[i].type == '*' || tokens[i].type == '/'))
 				{
 					mxpr = 3;
 					mxi = i;
 				}
-				else if(mxpr < 2 && tokens[i].type == EQ)
+				else if(mxpr <= 2 && tokens[i].type == EQ)
 				{
 					mxpr = 2;
 					mxi = i;
@@ -227,6 +232,32 @@ uint32_t expr(char *e, bool *success) {
 			nr_token--;
 			i--;
 		}
+	}
+
+	// brackets matching
+	top = -1;
+	for(int i = 0; i < nr_token; i++)
+	{
+		if(tokens[i].type == '(')
+		{
+			stack[++top] = i;
+		}
+		else if(tokens[i].type == ')')
+		{
+			if(top == -1)
+			{
+				// Bad expression
+				*success = false;
+				return 0;
+			}
+			match[stack[top--]] = i;
+		}
+	}
+	if(top != -1)
+	{
+		// Bad expression
+		*success = false;
+		return 0;
 	}
 
 	// Validate and calculate expression
