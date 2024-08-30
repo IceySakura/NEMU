@@ -162,24 +162,6 @@ uint32_t eval(int p, int q, bool *success)
 		// Remove the outermost brackets
 		return eval(p + 1, q - 1, success);
 	}
-	else if(is_unary(p))
-	{
-		// Unary operator
-		if(tokens[p].type == '+')
-		{
-			return eval(p + 1, q, success);
-		}
-		else if(tokens[p].type == '-')
-		{
-			return -eval(p + 1, q, success);
-		}
-		else
-		{
-			// Bad expression
-			*success &= false;
-			return 0;
-		}
-	}
 	else
 	{
 		// Find the dominant operator
@@ -196,7 +178,7 @@ uint32_t eval(int p, int q, bool *success)
 			}
 			else if(cnt == 0)
 			{
-				if(mxpr <= 4 && (tokens[i].type == '+' || tokens[i].type == '-'))
+				if(mxpr <= 4 && (tokens[i].type == '+' || tokens[i].type == '-' ) && !is_unary(i))
 				{
 					mxpr = 4;
 					mxi = i;
@@ -216,6 +198,17 @@ uint32_t eval(int p, int q, bool *success)
 
 		if(mxpr == -1)
 		{
+			// Dominant operator not found
+			if(is_unary(p))
+			{
+				// Unary operator
+				uint32_t val = eval(p + 1, q, success);
+				switch(tokens[p].type)
+				{
+					case '+': return val;
+					case '-': return -val;
+				}
+			}
 			// Bad expression
 			*success &= false;
 			return 0;
