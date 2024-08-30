@@ -7,7 +7,10 @@
 #include <regex.h>
 
 enum {
-	NOTYPE = 256, EQ, DEC, HEX, REG
+	NOTYPE = 256, 				  // Space
+	DEC, HEX, REG,				  // Operand
+	EQ, NEQ, AND, OR,             // Binary operator
+	POS, NEG, DEREF, NOT,         // Unary operator
 
 	/* TODO: Add more token types */
 
@@ -24,19 +27,23 @@ static struct rule {
 
 	{" +",	NOTYPE},				// spaces
 
-	// operator                        name                priority
-	{"\\+", '+'},					// plus                4
-	{"\\-", '-'},                   // minus               
-	{"\\*", '*'},                   // multiply            3
-	{"\\/", '/'},                   // divide              
-	{"==", EQ},						// equal               2
+	// operator                        name                priority 
 	{"\\(", '('},                   // left bracket        1
 	{"\\)", ')'},                   // right bracket
+	{"!", NOT},                     // not
+	{"\\*", '*'},                   // multiply            3
+	{"\\/", '/'},                   // divide 
+	{"\\+", '+'},					// plus                4
+	{"\\-", '-'},                   // minus
+	{"==", EQ},						// equal               6
+	{"!=", NEQ},                    // not equal
+	{"&&", AND},                    // and                 11
+	{"\\|\\|", OR},                 // or
 
 	// operand
 	{"0x[0-9a-fA-F]+", HEX},        // hexadecimal number
 	{"[0-9]+", DEC},                // decimal number
-	{"$[A-Za-z]+", REG},            // register
+	{"\\$[A-Za-z]+", REG},          // register
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -123,7 +130,9 @@ int match[32];
 // check if the operator is unary
 bool is_unary(int i)
 {
-	if(i == 0 || tokens[i - 1].type == '(' || tokens[i - 1].type == '+' || tokens[i - 1].type == '-' || tokens[i - 1].type == '*' || tokens[i - 1].type == '/' || tokens[i - 1].type == EQ)
+	if(i == 0 || tokens[i - 1].type == '(' || tokens[i - 1].type == '+' || tokens[i - 1].type == '-' || tokens[i - 1].type == '*' || tokens[i - 1].type == '/' 
+		|| tokens[i - 1].type == EQ || tokens[i - 1].type == NEQ || tokens[i - 1].type == AND || tokens[i - 1].type == OR 
+		|| tokens[i - 1].type == NOT || tokens[i - 1].type == DEREF || tokens[i - 1].type == POS || tokens[i - 1].type == NEG)
 	{
 		return true;
 	}
@@ -148,6 +157,25 @@ uint32_t eval(int p, int q, bool *success)
 		else if(tokens[p].type == HEX)
 		{
 			sscanf(tokens[p].str, "%x", &num);
+		}
+		else if(tokens[p].type == REG)
+		{
+			// Register
+			if(strcmp(tokens[p].str, "$eax") == 0) num = cpu.eax;
+			else if(strcmp(tokens[p].str, "$ecx") == 0) num = cpu.ecx;
+			else if(strcmp(tokens[p].str, "$edx") == 0) num = cpu.edx;
+			else if(strcmp(tokens[p].str, "$ebx") == 0) num = cpu.ebx;
+			else if(strcmp(tokens[p].str, "$esp") == 0) num = cpu.esp;
+			else if(strcmp(tokens[p].str, "$ebp") == 0) num = cpu.ebp;
+			else if(strcmp(tokens[p].str, "$esi") == 0) num = cpu.esi;
+			else if(strcmp(tokens[p].str, "$edi") == 0) num = cpu.edi;
+			else if(strcmp(tokens[p].str, "$eip") == 0) num = cpu.eip;
+			else
+			{
+				// Bad expression
+				*success &= false;
+				num = 0;
+			}
 		}
 		else
 		{
@@ -178,7 +206,17 @@ uint32_t eval(int p, int q, bool *success)
 			}
 			else if(cnt == 0)
 			{
-				if(mxpr <= 4 && (tokens[i].type == '+' || tokens[i].type == '-' ) && !is_unary(i))
+				if(mxpr <= 11 && (tokens[i].type == AND || tokens[i].type == OR))
+				{
+					mxpr = 11;
+					mxi = i;
+				}
+				else if(mxpr <= 6 && (tokens[i].type == EQ || tokens[i].type == NEQ))
+				{
+					mxpr = 6;
+					mxi = i;
+				}
+				else if(mxpr <= 4 && (tokens[i].type == '+' || tokens[i].type == '-' ))
 				{
 					mxpr = 4;
 					mxi = i;
@@ -186,11 +224,6 @@ uint32_t eval(int p, int q, bool *success)
 				else if(mxpr <= 3 && (tokens[i].type == '*' || tokens[i].type == '/'))
 				{
 					mxpr = 3;
-					mxi = i;
-				}
-				else if(mxpr <= 2 && tokens[i].type == EQ)
-				{
-					mxpr = 2;
 					mxi = i;
 				}
 			}
@@ -205,8 +238,10 @@ uint32_t eval(int p, int q, bool *success)
 				uint32_t val = eval(p + 1, q, success);
 				switch(tokens[p].type)
 				{
-					case '+': return val;
-					case '-': return -val;
+					case POS: return val;
+					case NEG: return -val;
+					case DEREF: return swaddr_read(val, 4);
+					case NOT: return !val;
 				}
 			}
 			// Bad expression
@@ -214,6 +249,7 @@ uint32_t eval(int p, int q, bool *success)
 			return 0;
 		}
 
+		// Calculate the value of the dominant operator
 		uint32_t val1 = eval(p, mxi - 1, success);
 		uint32_t val2 = eval(mxi + 1, q, success);
 		switch(tokens[mxi].type)
@@ -223,10 +259,11 @@ uint32_t eval(int p, int q, bool *success)
 			case '*': return val1 * val2;
 			case '/': return val1 / val2;
 			case EQ: return val1 == val2;
-			default: 
-				// Bad expression
-				*success &= false;
-				return 0;
+			case NEQ: return val1 != val2;
+			case AND: return val1 && val2;
+			case OR: return val1 || val2;
+			// Bad expression
+			default: *success &= false; return 0;
 		}
 	}
 }
@@ -251,6 +288,20 @@ uint32_t expr(char *e, bool *success) {
 			}
 			nr_token--;
 			i--;
+		}
+	}
+
+	// Detect unary operator
+	for(int i = 0; i < nr_token; i++) if(is_unary(i))
+	{
+		switch (tokens[i].type)
+		{
+			case '+': tokens[i].type = POS; break;
+			case '-': tokens[i].type = NEG; break;
+			case '*': tokens[i].type = DEREF; break;
+			case '!': tokens[i].type = NOT; break;
+			// Bad expression
+			default: *success = false; return 0;
 		}
 	}
 
