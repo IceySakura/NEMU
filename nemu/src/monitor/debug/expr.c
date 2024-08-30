@@ -98,16 +98,9 @@ static bool make_token(char *e) {
 				 */
 
 				tokens[nr_token].type = rules[i].token_type;
-				if(rules[i].token_type == DEC || rules[i].token_type == HEX) 
-				{
-					strncpy(tokens[nr_token].str, substr_start, substr_len);
-					tokens[nr_token].str[substr_len] = '\0';
-					Log("token[%d].str = %s", nr_token, tokens[nr_token].str);
-				}
-				else 
-				{
-					tokens[nr_token].str[0] = '\0';
-				}
+				strncpy(tokens[nr_token].str, substr_start, substr_len);
+				tokens[nr_token].str[substr_len] = '\0';
+//				Log("token[%d].str = %s", nr_token, tokens[nr_token].str);
 				nr_token++;
 
 				break;
