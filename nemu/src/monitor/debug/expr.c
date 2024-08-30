@@ -7,7 +7,7 @@
 #include <regex.h>
 
 enum {
-	NOTYPE = 256, EQ, DEC, HEX
+	NOTYPE = 256, EQ, DEC, HEX, REG
 
 	/* TODO: Add more token types */
 
@@ -24,18 +24,19 @@ static struct rule {
 
 	{" +",	NOTYPE},				// spaces
 
-	// operator
-	{"\\+", '+'},					// plus
-	{"\\-", '-'},                   // minus
-	{"\\*", '*'},                   // multiply
-	{"\\/", '/'},                   // divide
-	{"\\(", '('},                   // left bracket
+	// operator                        name                priority
+	{"\\+", '+'},					// plus                4
+	{"\\-", '-'},                   // minus               
+	{"\\*", '*'},                   // multiply            3
+	{"\\/", '/'},                   // divide              
+	{"==", EQ},						// equal               2
+	{"\\(", '('},                   // left bracket        1
 	{"\\)", ')'},                   // right bracket
-	{"==", EQ},						// equal
 
 	// operand
 	{"[0-9]+", DEC},                // decimal number
 	{"0x[0-9a-fA-F]+", HEX},        // hexadecimal number
+	{"$[A-Za-z]+", REG},            // register
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -114,6 +115,97 @@ static bool make_token(char *e) {
 	return true; 
 }
 
+uint32_t eval(int p, int q, bool *success)
+{
+	if(p > q)
+	{
+		// Bad expression
+		*success &= false;
+		return 0;
+	}
+	else if(p == q)
+	{
+		// Single token
+		uint32_t num;
+		if(tokens[p].type == DEC)
+		{
+			sscanf(tokens[p].str, "%u", &num);
+		}
+		else if(tokens[p].type == HEX)
+		{
+			sscanf(tokens[p].str, "%x", &num);
+		}
+		else
+		{
+			// Bad expression
+			*success &= false;
+			num = 0;
+		}
+		return num;
+	}
+	else if(tokens[p].type == '(' && tokens[q].type == ')')
+	{
+		// Remove the outermost brackets
+		return eval(p + 1, q - 1, success);
+	}
+	else
+	{
+		// Find the dominant operator
+		int mxpr = -1, mxi = p, cnt = 0;
+		for(int i = p; i <= q; ++i)
+		{
+			if(tokens[i].type == '(')
+			{
+				++cnt;
+			}
+			else if(tokens[i].type == ')')
+			{
+				--cnt;
+			}
+			else if(cnt == 0)
+			{
+				if(mxpr < 4 && (tokens[i].type == '+' || tokens[i].type == '-'))
+				{
+					mxpr = 4;
+					mxi = i;
+				}
+				else if(mxpr < 3 && (tokens[i].type == '*' || tokens[i].type == '/'))
+				{
+					mxpr = 3;
+					mxi = i;
+				}
+				else if(mxpr < 2 && tokens[i].type == EQ)
+				{
+					mxpr = 2;
+					mxi = i;
+				}
+			}
+		}
+
+		if(mxpr == -1)
+		{
+			// Bad expression
+			*success &= false;
+			return 0;
+		}
+
+		uint32_t val1 = eval(p, mxi - 1, success);
+		uint32_t val2 = eval(mxi + 1, q, success);
+		switch(tokens[mxi].type)
+		{
+			case '+': return val1 + val2;
+			case '-': return val1 - val2;
+			case '*': return val1 * val2;
+			case '/': return val1 / val2;
+			case EQ: return val1 == val2;
+			default: 
+				// Bad expression
+				*success &= false;
+				return 0;
+		}
+	}
+}
+
 uint32_t expr(char *e, bool *success) {
 	if(!make_token(e)) {
 		*success = false;
@@ -121,7 +213,24 @@ uint32_t expr(char *e, bool *success) {
 	}
 
 	/* TODO: Insert codes to evaluate the expression. */
-	Log("nr_token = %d", nr_token);
-	return 0;
+
+	// Delete spaces
+	for(int i = 0; i < nr_token; i++)
+	{
+		if(tokens[i].type == NOTYPE)
+		{
+			int j;
+			for(j = i; j < nr_token - 1; j++)
+			{
+				tokens[j] = tokens[j + 1];
+			}
+			nr_token--;
+			i--;
+		}
+	}
+
+	// Validate and calculate expression
+	*success = true;
+	return eval(0, nr_token - 1, success);
 }
 
