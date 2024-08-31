@@ -164,6 +164,26 @@ static int cmd_w(char *args)
 	return 0;
 }
 
+// Delete watch point
+static int cmd_d(char *args)
+{
+	int n;
+	sscanf(args, "%d", &n);
+	WP *p = get_head();
+	while(p != NULL)
+	{
+		if(p->NO == n)
+		{
+			free_wp(p);
+			printf("Delete watchpoint #%d.\n", n);
+			return 0;
+		}
+		p = p->next;
+	}
+	printf("Watchpoint not found.\n");
+	return 0;
+}
+
 static struct {
 	char *name;
 	char *description;
@@ -177,7 +197,7 @@ static struct {
 	{ "x", "Display ram value", cmd_x},
 	{ "p", "Calculate expr value", cmd_p},
 	{ "w", "Set watch point", cmd_w},
-
+	{ "d", "Delete watch point", cmd_d},
 	/* TODO: Add more commands */
 
 };
