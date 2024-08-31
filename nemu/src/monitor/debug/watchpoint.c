@@ -73,22 +73,3 @@ void print_wp_rcs(WP *wp)
 	print_wp_rcs(wp->next);
 	printf("%d\t%s\t0x%08x\n", wp->NO, wp->expr, wp->value);
 }
-bool check_wp_rcs(WP *wp)
-{
-	if(wp == NULL)
-	{
-		return false;
-	}
-	bool success = true;
-	uint32_t value = expr(wp->expr, &success);
-	if(value != wp->value)
-	{
-		printf("Hit watchpoint %d at address 0x%08x\n", wp->NO, cpu.eip);
-		printf("Expr: %s\n", wp->expr);
-		printf("Old value: 0x%08x\n", wp->value);
-		printf("New value: 0x%08x\n", value);
-		wp->value = value;
-		return true;
-	}
-	return check_wp_rcs(wp->next);
-}
