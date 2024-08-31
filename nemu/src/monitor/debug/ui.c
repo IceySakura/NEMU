@@ -9,6 +9,11 @@
 
 void cpu_exec(uint32_t);
 
+WP* get_head();
+WP* new_wp();
+void free_wp(WP *wp);
+void print_wp_rcs(WP *wp);
+
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 char* rl_gets() {
 	static char *line_read = NULL;
@@ -74,6 +79,15 @@ static int cmd_info(char *args)
 		printf("esp\t\t0x%08x\t\t%d\n", cpu.esp, cpu.esp);
 		printf("eip\t\t0x%08x\t\t%d\n", cpu.eip, cpu.eip);
 	}
+	else if(args[0] == 'w')
+	{
+		printf("NO\tExpr\tValue\n");
+		print_wp_rcs(get_head());
+	}
+	else
+	{
+		printf("Unknown command.\n");
+	}
 	return 0;
 }
 
@@ -125,6 +139,31 @@ static int cmd_p(char *args)
 	return 0;
 }
 
+// Set watch point
+static int cmd_w(char *args)
+{
+	if(args == NULL)
+	{
+		printf("Please input expression.\n");
+		return 0;
+	}
+
+	WP *wp = new_wp();
+	strcpy(wp->expr, args);
+	bool success = true;
+	wp->value = expr(args, &success);
+	if(success)
+	{
+		printf("Set watchpoint #%d: %s\n", wp->NO, wp->expr);
+	}
+	else
+	{
+		printf("Invalid expression.\n");
+		free_wp(wp);
+	}
+	return 0;
+}
+
 static struct {
 	char *name;
 	char *description;
@@ -137,6 +176,7 @@ static struct {
 	{ "info", "Display register value or watchpoint value", cmd_info},
 	{ "x", "Display ram value", cmd_x},
 	{ "p", "Calculate expr value", cmd_p},
+	{ "w", "Set watch point", cmd_w},
 
 	/* TODO: Add more commands */
 

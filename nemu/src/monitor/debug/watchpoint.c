@@ -6,6 +6,10 @@
 static WP wp_pool[NR_WP];
 static WP *head, *free_;
 
+WP* get_head()
+{
+	return head;
+}
 void init_wp_pool() {
 	int i;
 	for(i = 0; i < NR_WP; i ++) {
@@ -57,4 +61,14 @@ void free_wp(WP *wp)
 	}
 	printf("Watchpoint not found.\n");
 	assert(0);
+}
+
+void print_wp_rcs(WP *wp)
+{
+	if(wp == NULL)
+	{
+		return;
+	}
+	print_wp_rcs(wp->next);
+	printf("%d\t%s\t0x%08x\n", wp->NO, wp->expr, wp->value);
 }
