@@ -96,7 +96,23 @@ static int cmd_x(char *args)
 {
 	int n;
 	swaddr_t addr;
-	sscanf(args, "%d %x", &n, &addr);
+
+	char* tmp = strtok(NULL, " ");
+	if(tmp == NULL)
+	{
+		printf("Format: x N EXPR\n");
+		return 0;
+	}
+	sscanf(tmp, "%d", &n);
+
+	bool success = true;
+	addr = expr(strtok(NULL, " "), &success);
+	if(!success)
+	{
+		printf("Invalid expression.\n");
+		return 0;
+	}
+
 	int i;
 	for(i = 0; i < n; i++)
 	{
