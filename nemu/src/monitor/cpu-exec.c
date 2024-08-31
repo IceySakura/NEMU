@@ -1,4 +1,5 @@
 #include "monitor/monitor.h"
+#include "monitor/watchpoint.h"
 #include "cpu/helper.h"
 #include <setjmp.h>
 
@@ -12,6 +13,9 @@
 int nemu_state = STOP;
 
 int exec(swaddr_t);
+
+WP* get_head();
+int expr(char *, bool *);
 
 char assembly[80];
 char asm_buf[128];
@@ -73,7 +77,22 @@ void cpu_exec(volatile uint32_t n) {
 #endif
 
 		/* TODO: check watchpoints here. */
-
+		WP *wp = get_head();
+		while(wp != NULL)
+		{
+			bool success = true;
+			uint32_t value = expr(wp->expr, &success);
+			if(value != wp->value)
+			{
+				printf("Hit watchpoint %d at address 0x%08x\n", wp->NO, cpu.eip);
+				printf("Expr: %s\n", wp->expr);
+				printf("Old value: 0x%08x\n", wp->value);
+				printf("New value: 0x%08x\n", value);
+				wp->value = value;
+				nemu_state = STOP;
+			}
+			wp = wp->next;
+		}
 
 #ifdef HAS_DEVICE
 		extern void device_update();
