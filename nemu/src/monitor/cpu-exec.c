@@ -84,10 +84,9 @@ void cpu_exec(volatile uint32_t n) {
 			uint32_t value = expr(wp->expr, &success);
 			if(value != wp->value)
 			{
-				printf("Hit watchpoint %d at address 0x%08x\n", wp->NO, cpu.eip);
-				printf("Expr: %s\n", wp->expr);
-				printf("Old value: 0x%08x\n", wp->value);
-				printf("New value: 0x%08x\n", value);
+				printf("Hit watchpoint %d at address 0x%08x, expr = %s\n", wp->NO, cpu.eip, wp->expr);
+				printf("Old value = 0x%08x\n", wp->value);
+				printf("New value = 0x%08x\n", value);
 				wp->value = value;
 				nemu_state = STOP;
 			}
