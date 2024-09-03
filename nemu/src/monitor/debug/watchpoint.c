@@ -71,5 +71,5 @@ void print_wp_rcs(WP *wp)
 		return;
 	}
 	print_wp_rcs(wp->next);
-	printf("%d\t%s\t0x%08x\n", wp->NO, wp->expr, wp->value);
+	printf("\t%d\t%s\t0x%08x\n", wp->NO, wp->expr, wp->value);
 }

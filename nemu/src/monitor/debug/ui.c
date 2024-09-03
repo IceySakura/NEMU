@@ -81,7 +81,7 @@ static int cmd_info(char *args)
 	}
 	else if(args[0] == 'w')
 	{
-		printf("NO\tExpr\tValue\n");
+		printf("\tNO\tAddress\tEnable\n");
 		print_wp_rcs(get_head());
 	}
 	else
