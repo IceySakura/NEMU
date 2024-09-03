@@ -170,7 +170,7 @@ static int cmd_w(char *args)
 	wp->value = expr(args, &success);
 	if(success)
 	{
-		printf("Set watchpoint #%d: %s\n", wp->NO, wp->expr);
+		printf("Set watchpoint #%d\n", wp->NO);
 	}
 	else
 	{
