@@ -89,7 +89,7 @@ static bool make_token(char *e) {
 				char *substr_start = e + position;
 				int substr_len = pmatch.rm_eo;
 
-//				Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s", i, rules[i].regex, position, substr_len, substr_len, substr_start);
+				Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s", i, rules[i].regex, position, substr_len, substr_len, substr_start);
 				position += substr_len;
 
 				/* TODO: Now a new token is recognized with rules[i]. Add codes
@@ -157,10 +157,8 @@ uint32_t eval(int p, int q, bool *success)
 		else if(tokens[p].type == REG)
 		{
 			// Register
-			if(tokens[p].str != NULL)
-				Log("reg found: %s", tokens[p].str);
-			if(strcmp(tokens[p].str, "$eax") == 0) 
-			{num = cpu.eax;Log("eax found");}
+//			if(tokens[p].str != NULL) Log("reg found: %s", tokens[p].str);
+			if(strcmp(tokens[p].str, "$eax") == 0) num = cpu.eax;
 			else if(strcmp(tokens[p].str, "$ecx") == 0) num = cpu.ecx;
 			else if(strcmp(tokens[p].str, "$edx") == 0) num = cpu.edx;
 			else if(strcmp(tokens[p].str, "$ebx") == 0) num = cpu.ebx;
