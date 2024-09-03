@@ -192,8 +192,8 @@ uint32_t eval(int p, int q, bool *success)
 	else
 	{
 		// Find the dominant operator
-		int mxpr = -1, mxi = p, cnt = 0;
-		for(int i = p; i <= q; ++i)
+		int mxpr = -1, mxi = p, cnt = 0, i;
+		for(i = p; i <= q; ++i)
 		{
 			if(tokens[i].type == '(')
 			{
@@ -276,7 +276,8 @@ uint32_t expr(char *e, bool *success) {
 	/* TODO: Insert codes to evaluate the expression. */
 
 	// Delete spaces
-	for(int i = 0; i < nr_token; i++)
+	int i;
+	for(i = 0; i < nr_token; i++)
 	{
 		if(tokens[i].type == NOTYPE)
 		{
@@ -291,7 +292,7 @@ uint32_t expr(char *e, bool *success) {
 	}
 
 	// Detect unary operator
-	for(int i = 0; i < nr_token; i++) if(is_unary(i))
+	for(i = 0; i < nr_token; i++) if(is_unary(i))
 	{
 		switch (tokens[i].type)
 		{
@@ -304,11 +305,11 @@ uint32_t expr(char *e, bool *success) {
 
 	// brackets matching
 	top = -1;
-	for(int i = 0; i < nr_token; i++)
+	for(i = 0; i < nr_token; i++)
 	{
 		stack[i] = match[i] = -1;
 	}
-	for(int i = 0; i < nr_token; i++)
+	for(i = 0; i < nr_token; i++)
 	{
 		if(tokens[i].type == '(')
 		{
