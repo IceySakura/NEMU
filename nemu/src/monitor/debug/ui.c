@@ -191,7 +191,7 @@ static int cmd_d(char *args)
 		if(p->NO == n)
 		{
 			free_wp(p);
-			printf("Delete watchpoint #%d.\n", n);
+			printf("Watchpoint #%d does not exist\n", n);
 			return 0;
 		}
 		p = p->next;
