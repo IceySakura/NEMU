@@ -21,6 +21,7 @@
 #include "control/call.h"
 #include "control/test.h"
 #include "control/jcc.h"
+#include "control/cmp.h"
 
 #include "logic/and.h"
 #include "logic/or.h"
