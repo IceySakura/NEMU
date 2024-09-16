@@ -6,6 +6,7 @@
 #include "data-mov/cltd.h"
 #include "data-mov/push.h"
 #include "data-mov/pop.h"
+#include "data-mov/setcc.h"
 
 #include "arith/adc.h"
 #include "arith/dec.h"
