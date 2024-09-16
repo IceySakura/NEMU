@@ -9,6 +9,7 @@ static void do_execute() {
 			cpu.eip = cpu.eip & 0xffff;
 		}
 	}
+	print_asm_template1();
 }
 make_instr_helper(i)
 
