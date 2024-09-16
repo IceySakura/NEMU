@@ -3,8 +3,8 @@
 #define instr cmp
 
 static void do_execute() {
-	DATA_TYPE_S src = op_src->val;
-	DATA_TYPE_S dest = op_dest->val;
+	DATA_TYPE_S src = op_src->val; // imm
+	DATA_TYPE_S dest = op_dest->val; // r/m
 	DATA_TYPE_S result = dest - src;
 	OPERAND_W(op_dest, result);
 	// update EFLAGS
@@ -12,6 +12,6 @@ static void do_execute() {
 	print_asm_template2();
 }
 
-make_instr_helper(i2rm)
+make_instr_helper(rm_imm)
 
 #include "cpu/exec/template-end.h"
