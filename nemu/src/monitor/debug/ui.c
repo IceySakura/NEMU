@@ -80,8 +80,8 @@ static int cmd_info(char *args)
 		printf("eip\t\t0x%08x\t\t%d\n", cpu.eip, cpu.eip);
 
 		// Log eflags
-		Log("CF\tPF\tAF\tZF\tSF\tTF\tIF\tDF\tOF\n");
-		Log("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", cpu.eflags.CF, cpu.eflags.PF, cpu.eflags.AF, cpu.eflags.ZF, cpu.eflags.SF, cpu.eflags.TF, cpu.eflags.IF, cpu.eflags.DF, cpu.eflags.OF);
+		Log("CF\tPF\tAF\tZF\tSF\tTF\tIF\tDF\tOF");
+		Log("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d", cpu.eflags.CF, cpu.eflags.PF, cpu.eflags.AF, cpu.eflags.ZF, cpu.eflags.SF, cpu.eflags.TF, cpu.eflags.IF, cpu.eflags.DF, cpu.eflags.OF);
 	}
 	else if(args[0] == 'w')
 	{
