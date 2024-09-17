@@ -9,6 +9,8 @@ static void do_execute() {
 	OPERAND_W(op_dest, result);
 	// update EFLAGS
 	update_eflags_pf_zf_sf(result);
+	cpu.eflags.CF = dest < src;
+	cpu.eflags.OF = MSB(dest) != MSB(src) && MSB(dest) != MSB(result);
 	print_asm_template2();
 }
 
