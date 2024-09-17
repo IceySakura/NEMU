@@ -9,10 +9,10 @@ static void do_execute() {
 	Log("src = %d, dest = %d, result = %d", src, dest, result);
 	// update EFLAGS
 	update_eflags_pf_zf_sf((int32_t)result);
-//	cpu.eflags.CF = (DATA_TYPE)dest < (DATA_TYPE)src;
-//	cpu.eflags.OF = MSB(dest) != MSB(result);
-	cpu.eflags.CF = result > op_dest->val;
-	cpu.eflags.OF = MSB((op_dest->val ^ op_src->val) & (op_dest->val ^ result));
+	cpu.eflags.CF = (DATA_TYPE)dest < (DATA_TYPE)src;
+	cpu.eflags.OF = MSB(dest) != MSB(result);
+//	cpu.eflags.CF = result > op_dest->val;
+//	cpu.eflags.OF = MSB((op_dest->val ^ op_src->val) & (op_dest->val ^ result));
 	print_asm_template2();
 }
 
