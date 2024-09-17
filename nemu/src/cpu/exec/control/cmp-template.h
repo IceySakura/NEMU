@@ -13,8 +13,8 @@ static void do_execute() {
 	Log("src = %d, dest = %d, result = %d", src, dest, result);
 	// update EFLAGS
 	update_eflags_pf_zf_sf((int32_t)result);
-	cpu.eflags.CF = dest < src;
-	cpu.eflags.OF = MSB(dest) != MSB(src) && MSB(dest) != MSB(result);
+	cpu.eflags.CF = (DATA_TYPE)dest < (DATA_TYPE)src;
+	cpu.eflags.OF = MSB(dest) != MSB(result);
 	print_asm_template2();
 }
 
