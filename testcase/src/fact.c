@@ -10,7 +10,7 @@ int fact(int n) {
 
 int main() {
 	int i;
-	int num = 5;
+	int num = 10;
 	for(i = 0; i < num; i ++) {
 		f[i] = fact(i);
 		nemu_assert(f[i] == ans[i]);
