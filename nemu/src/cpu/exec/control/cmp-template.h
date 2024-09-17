@@ -2,17 +2,13 @@
 
 #define instr cmp
 
-static void do_execute() {
-	DATA_TYPE_S src = op_src->val;
-	DATA_TYPE_S dest = op_dest->val;
-	DATA_TYPE_S result = dest - src;
-	Log("src = %d, dest = %d, result = %d", src, dest, result);
-	// update EFLAGS
-	update_eflags_pf_zf_sf((int32_t)result);
-//	cpu.eflags.CF = (DATA_TYPE)dest < (DATA_TYPE)src;
-//	cpu.eflags.OF = MSB(dest) != MSB(result);
+static void do_execute () {
+	DATA_TYPE result = op_dest->val - op_src->val;
+
+	update_eflags_pf_zf_sf((DATA_TYPE_S)result);
 	cpu.eflags.CF = result > op_dest->val;
 	cpu.eflags.OF = MSB((op_dest->val ^ op_src->val) & (op_dest->val ^ result));
+
 	print_asm_template2();
 }
 
