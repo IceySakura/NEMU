@@ -10,12 +10,12 @@ int fact(int n) {
 
 int main() {
 	int i;
-	for(i = 0; i < 2; i ++) {
+	for(i = 0; i < 3; i ++) {
 		f[i] = fact(i);
 		nemu_assert(f[i] == ans[i]);
 	}
 
-	nemu_assert(i == 2);
+	nemu_assert(i == 3);
 
 	return 0;
 }
