@@ -27,4 +27,7 @@ make_helper(jge_i_v);
 make_helper(jne_i_b);
 make_helper(jne_i_v);
 
+make_helper(js_i_b);
+make_helper(js_i_v);
+
 #endif
