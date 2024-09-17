@@ -26,6 +26,7 @@
 #include "control/ret.h"
 #include "control/test.h"
 #include "control/cmp.h"
+#include "control/leave.h"
 
 #include "logic/and.h"
 #include "logic/or.h"
