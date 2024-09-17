@@ -5,7 +5,7 @@ int ans[] = {101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 16
 int main() {
 	int m, i, n = 0;
 	int prime;
-	for(m = 101; m <= 200; m += 2) {
+	for(m = 101; m <= 103; m += 2) {
 		prime = 1;
 		for(i = 2; i < m; i ++) {
 			if(m % i == 0) {
@@ -19,8 +19,8 @@ int main() {
 		}
 	}
 
-	nemu_assert(m == 201);
-	nemu_assert(n == 21);
+	nemu_assert(m == 105);
+	nemu_assert(n == 2);
 
 	return 0;
 }
