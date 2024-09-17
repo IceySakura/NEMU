@@ -29,3 +29,5 @@ make_helper_v(jge_i)
 make_helper_v(jne_i)
 
 make_helper_v(js_i)
+
+make_helper_v(jns_i)
